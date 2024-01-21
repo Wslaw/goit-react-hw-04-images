@@ -2,7 +2,7 @@
   "name": "react-homework-template",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Wslaw.github.io/goit-react-hw-04-images/",
+  "homepage": "https://Wslaw.github.io/goit-react-hw-04-images",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
@@ -10,6 +10,7 @@
     "axios": "^1.6.5",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-loader-spinner": "^6.1.6",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.3"
   },
