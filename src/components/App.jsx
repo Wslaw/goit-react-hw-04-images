@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -7,6 +7,49 @@ import Modal from './Modal/Modal';
 import pixabayApi from './pixabayApi';
 
 
+const App = () => {
+  const [search, setSearch] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [hasLoadedMore, setHasLoaderMore] = useState(false);
+  const [canLoadMore, setCanLoadMore] = useState(true);
+
+ const {
+   images,
+   isLoading,
+   showModal,
+   total,
+   selectedImage,
+   canLoadMore,
+   hasLoadedMore,
+ } = this.state;
+
+ return (
+   <div className="App">
+     <Searchbar onSubmit={this.handleSearchSubmit} />
+     <ImageGallery images={images} onImageClick={this.handleImageClick} />
+     {isLoading && <Loader />}
+
+     {canLoadMore && images.length > 0 && total > images.length && (
+       <Button onLoadMore={this.handleLoadMore} type="button" />
+     )}
+     {showModal && (
+       <Modal image={selectedImage} onClose={this.handleModalClose} />
+     )}
+     {hasLoadedMore && window.scrollY > 0 && (
+       <button className="Button" onClick={this.handleScrollToTop}>
+         Scroll to Top
+       </button>
+     )}
+   </div>
+ );
+
+}
+
+/*
 class App extends Component {
   state = {
     search: '',
@@ -94,12 +137,10 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSearchSubmit} />
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
         {isLoading && <Loader />}
-        {/* {images.length > 0 && this.state.total > images.length && (
-          <Button onLoadMore={this.handleLoadMore} type="button" />
-        )} */}
+      
         {canLoadMore && images.length > 0 && total > images.length && (
           <Button onLoadMore={this.handleLoadMore} type="button" />
-        )}{' '}
+        )}
         {showModal && (
           <Modal image={selectedImage} onClose={this.handleModalClose} />
         )}
@@ -112,5 +153,5 @@ class App extends Component {
     );
   }
 }
-
+*/
 export default App;
