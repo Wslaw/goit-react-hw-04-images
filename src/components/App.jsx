@@ -16,68 +16,76 @@ const App = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const [hasLoadedMore, setHasLoaderMore] = useState(false);
   const [canLoadMore, setCanLoadMore] = useState(true);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
+  const [total, setTotal] = useState(0);
 
-useEffect(async ()=>{
-  const fetchImages = async ()=> {
-    setSearch({ isLoading: true });
 
-    try {
-      const response = await pixabayApi.fetchImages(search, page);
-          const { totalHits } = response;
-  
-      setSearch(prevState => ({
-        images: [...prevState.images, ...response.hits],
-        total: totalHits,
-        canLoadMore: page < Math.ceil(totalHits / 12),
-      }));
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    } finally {
-      setSearch({ isLoading: false });
-    }
-  }
-  fetchImages();
-},[])
 
-  const handleSearchSubmit = async search => {
-    await setSearch({
-      search,
-      images: [],
-      page: 1,
-    });
-
-    fetchImages();
+  const handleSearchSubmit = async (search) => {    
+    setSearch(search);
+    setImages([]);
+    setPage(1);
   };
+
+   
 
   const handleLoadMore = () => {
-    setIsLoading(
-      prevState => ({ page: prevState.page + 1 }),
-      () => {
-        fetchImages();
-        setHasLoaderMore({ hasLoadedMore: true }); // Устанавливаем флаг после загрузки
-      }
-    );
+    setPage((prevPage) => prevPage + 1) ;        
+        setHasLoaderMore( true );       
   };
+  
 
-  const handleImageClick = image => {
-    setSelectedImage({
-      showModal: true,
-      selectedImage: image.largeImageURL,
-    });
-  };
+  const handleImageClick = (image) => {
+    setShowModal(true);
+      setSelectedImage(image.largeImageURL);
+    };
+  
+  
 
  const handleModalClose = () => {
-    setShowModal({
-      showModal: false,
-      selectedImage: '',
-    });
+   setShowModal(false);
+      setSelectedImage('');
   };
 
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setHasLoaderMore({ hasLoadedMore: false }); // Сбрасываем флаг после возвращения к началу
+  const fetchImages = async () => {
+    setIsLoading(true);
+    try {
+      const response = await pixabayApi.fetchImages(search, page);
+      const { totalHits } = response;
+
+      setImages((prevImages) => [...prevImages, ...response.hits]);
+        setTotal(totalHits);
+        setCanLoadMore( page < Math.ceil(totalHits / 12));
+      
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      // setError(error.message)
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (!search) return;
+
+    fetchImages();
+  }, [search, page]);
+
+  useEffect(() => {
+    const handleScrollToTop = () => {
+      // window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!hasLoadedMore && window.scrollY > 0) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setHasLoaderMore(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollToTop);
+    return () => {
+      window.removeEventListener('scroll', handleScrollToTop);
+    };
+  }, [hasLoadedMore]);
+  
 
  
  return (
@@ -93,7 +101,7 @@ useEffect(async ()=>{
        <Modal image={selectedImage} onClose={handleModalClose} />
      )}
      {hasLoadedMore && window.scrollY > 0 && (
-       <button className="Button" onClick={handleScrollToTop}>
+       <button className="Button" onClick={()=>setHasLoaderMore(false)}>
          Scroll to Top
        </button>
      )}
