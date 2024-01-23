@@ -16,31 +16,84 @@ const App = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const [hasLoadedMore, setHasLoaderMore] = useState(false);
   const [canLoadMore, setCanLoadMore] = useState(true);
+  const [error, setError] = useState(null);
 
- const {
-   images,
-   isLoading,
-   showModal,
-   total,
-   selectedImage,
-   canLoadMore,
-   hasLoadedMore,
- } = this.state;
+useEffect(async ()=>{
+  const fetchImages = async ()=> {
+    setSearch({ isLoading: true });
 
+    try {
+      const response = await pixabayApi.fetchImages(search, page);
+          const { totalHits } = response;
+  
+      setSearch(prevState => ({
+        images: [...prevState.images, ...response.hits],
+        total: totalHits,
+        canLoadMore: page < Math.ceil(totalHits / 12),
+      }));
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    } finally {
+      setSearch({ isLoading: false });
+    }
+  }
+  fetchImages();
+},[])
+
+  const handleSearchSubmit = async search => {
+    await setSearch({
+      search,
+      images: [],
+      page: 1,
+    });
+
+    fetchImages();
+  };
+
+  const handleLoadMore = () => {
+    setIsLoading(
+      prevState => ({ page: prevState.page + 1 }),
+      () => {
+        fetchImages();
+        setHasLoaderMore({ hasLoadedMore: true }); // Устанавливаем флаг после загрузки
+      }
+    );
+  };
+
+  const handleImageClick = image => {
+    setSelectedImage({
+      showModal: true,
+      selectedImage: image.largeImageURL,
+    });
+  };
+
+ const handleModalClose = () => {
+    setShowModal({
+      showModal: false,
+      selectedImage: '',
+    });
+  };
+
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setHasLoaderMore({ hasLoadedMore: false }); // Сбрасываем флаг после возвращения к началу
+  };
+
+ 
  return (
    <div className="App">
-     <Searchbar onSubmit={this.handleSearchSubmit} />
-     <ImageGallery images={images} onImageClick={this.handleImageClick} />
+     <Searchbar onSubmit={handleSearchSubmit} />
+     <ImageGallery images={images} onImageClick={handleImageClick} />
      {isLoading && <Loader />}
 
      {canLoadMore && images.length > 0 && total > images.length && (
-       <Button onLoadMore={this.handleLoadMore} type="button" />
+       <Button onLoadMore={handleLoadMore} type="button" />
      )}
      {showModal && (
-       <Modal image={selectedImage} onClose={this.handleModalClose} />
+       <Modal image={selectedImage} onClose={handleModalClose} />
      )}
      {hasLoadedMore && window.scrollY > 0 && (
-       <button className="Button" onClick={this.handleScrollToTop}>
+       <button className="Button" onClick={handleScrollToTop}>
          Scroll to Top
        </button>
      )}
@@ -49,6 +102,8 @@ const App = () => {
 
 }
 
+
+export default App;
 /*
 class App extends Component {
   state = {
@@ -154,4 +209,4 @@ class App extends Component {
   }
 }
 */
-export default App;
+
