@@ -40,22 +40,22 @@ const App = () => {
     setSelectedImage('');
   };
 
-  const fetchImages = async () => {
-    setIsLoading(true);
-    try {
-      const response = await pixabayApi.fetchImages(search, page);
-      const { totalHits } = response;
+  // const fetchImages = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await pixabayApi.fetchImages(search, page);
+  //     const { totalHits } = response;
 
-      setImages(prevImages => [...prevImages, ...response.hits]);
-      setTotal(totalHits);
-      setCanLoadMore(page < Math.ceil(totalHits / 12));
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    } finally {
-      setIsLoading(false);
-      setHasLoadedMore(true);
-    }
-  };
+  //     setImages(prevImages => [...prevImages, ...response.hits]);
+  //     setTotal(totalHits);
+  //     setCanLoadMore(page < Math.ceil(totalHits / 12));
+  //   } catch (error) {
+  //     console.error('Error fetching images:', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //     setHasLoadedMore(true);
+  //   }
+  // };
 
   // useEffect(() => {
   //   if (!search) return;
