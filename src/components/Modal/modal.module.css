@@ -1,0 +1,24 @@
+.overlay{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(65, 64, 64, 0.733);
+    z-index: 99;
+}
+.modal{
+    background-color: white;
+    overflow: hidden;
+    border-radius: 10px;
+    /* height: 400px;
+    width: 750px; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.img{
+    width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+}
