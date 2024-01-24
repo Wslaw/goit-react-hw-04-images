@@ -1,24 +1,26 @@
-.overlay{
-    position: fixed;
-    height: 100vh;
-    width: 100vw;
-    background-color: rgba(65, 64, 64, 0.733);
-    z-index: 99;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
 }
-.modal{
-    background-color: white;
-    overflow: hidden;
-    border-radius: 10px;
-    /* height: 400px;
-    width: 750px; */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+
+.modal {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
 }
-.img{
-    width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+
+.img {
+  object-fit: cover;
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  margin: 0 auto;
 }
