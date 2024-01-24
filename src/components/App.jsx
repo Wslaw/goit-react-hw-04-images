@@ -19,18 +19,18 @@ const App = () => {
   const [prevSearch, setPrevSearch] = useState('');
   const [prevPage, setPrevPage] = useState(0);
 
-  const handleSearchSubmit = async (search) => {
+  const handleSearchSubmit = async search => {
     setSearch(search);
     setImages([]);
     setPage(1);
   };
 
   const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);
+    setPage(prevPage => prevPage + 1);
     setHasLoadedMore(true);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = image => {
     setShowModal(true);
     setSelectedImage(image.largeImageURL);
   };
@@ -46,7 +46,7 @@ const App = () => {
       const response = await pixabayApi.fetchImages(search, page);
       const { totalHits } = response;
 
-      setImages((prevImages) => [...prevImages, ...response.hits]);
+      setImages(prevImages => [...prevImages, ...response.hits]);
       setTotal(totalHits);
       setCanLoadMore(page < Math.ceil(totalHits / 12));
     } catch (error) {
@@ -57,14 +57,40 @@ const App = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (!search) return;
+
+  //   fetchImages();
+  //   setPrevSearch(search);
+  //   setPrevPage(page);
+  // }, [search, page]);
+
   useEffect(() => {
     if (!search) return;
+
+    const fetchImages = async () => {
+      setIsLoading(true);
+      try {
+        const response = await pixabayApi.fetchImages(search, page);
+        const { totalHits } = response;
+
+        setImages(prevImages => [...prevImages, ...response.hits]);
+        setTotal(totalHits);
+        setCanLoadMore(page < Math.ceil(totalHits / 12));
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      } finally {
+        setIsLoading(false);
+        setHasLoadedMore(true);
+      }
+    };
 
     fetchImages();
     setPrevSearch(search);
     setPrevPage(page);
   }, [search, page]);
 
+  
   useEffect(() => {
     const handleScrollToTop = () => {
       if (!hasLoadedMore && window.scrollY > 0) {
@@ -87,7 +113,7 @@ const App = () => {
         const response = await pixabayApi.fetchImages(search, page);
         const { totalHits } = response;
 
-        setImages((prevImages) => [...prevImages, ...response.hits]);
+        setImages(prevImages => [...prevImages, ...response.hits]);
         setTotal(totalHits);
         setCanLoadMore(page < Math.ceil(totalHits / 12));
       } catch (error) {
